@@ -3,9 +3,9 @@ import Loader from "../components/Loader";
 import Card from "../components/Card";
 import FormField from "../components/FormField";
 
-const RenderCards = ({ data, title }) => {
-  if (data?.length > 0)
-    return data.map((post) => <Card key={post._id} {...post} />);
+const RenderCards = ({ posts, title }) => {
+  if (posts?.length > 0)
+    return posts.map((post) => <Card key={post._id} {...post} />);
 
   return (
     <h2 className="mt-5 font-bold text-[#6449ff] text-xl uppercase">{title}</h2>
@@ -28,7 +28,7 @@ function Home() {
         },
       });
       const result = await response.json();
-      if (result.status === 200) {
+      if (response.status === 200) {
         setPosts(result.posts.reverse());
         setError("");
       } else {
@@ -73,9 +73,9 @@ function Home() {
               )}
               <div className="grid lg:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-3">
                 {searchText ? (
-                  <RenderCards data={[]} title="No search results found" />
+                  <RenderCards posts={[]} title="No search results found" />
                 ) : (
-                  <RenderCards data={posts} title="No posts found" />
+                  <RenderCards posts={posts} title="No posts found" />
                 )}
               </div>
             </>
