@@ -14,8 +14,36 @@ const RenderCards = ({ data, title }) => {
 
 function Home() {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [posts, setPosts] = useState(null);
   const [searchText, setSearchText] = useState("");
+
+  const fetchPosts = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("http://localhost:8080/api/v1/post", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const result = await response.json();
+      if (result.status === 200) {
+        setPosts(result.posts.reverse());
+        setError("");
+      } else {
+        setError(result.error);
+      }
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
 
   return (
     <section className="max-w-7xl mx-auto">
@@ -47,7 +75,7 @@ function Home() {
                 {searchText ? (
                   <RenderCards data={[]} title="No search results found" />
                 ) : (
-                  <RenderCards data={[]} title="No posts found" />
+                  <RenderCards data={posts} title="No posts found" />
                 )}
               </div>
             </>

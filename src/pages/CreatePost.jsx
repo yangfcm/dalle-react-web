@@ -17,7 +17,32 @@ function CreatePost() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSubmit = () => {};
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!(form.name.trim() && form.prompt.trim() && form.image)) return;
+    try {
+      setLoading(true);
+      const response = await fetch("http://localhost:8080/api/v1/post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+      await response.json();
+      setForm({
+        name: "",
+        prompt: "",
+        image: "",
+      });
+      // handle success or error.
+      setError("");
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const generateImage = async () => {
     if (!form.prompt.trim()) return;
@@ -123,6 +148,7 @@ function CreatePost() {
           <button
             type="submit"
             className="mt-3 text-white bg-[#6469ff] font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2 text-center"
+            disabled={loading}
           >
             {loading ? "Sharing..." : "Share with others"}
           </button>
