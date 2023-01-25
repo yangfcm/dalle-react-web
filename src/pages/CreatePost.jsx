@@ -15,10 +15,37 @@ function CreatePost() {
   });
   const [generating, setGenerating] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = () => {};
 
-  const generateImage = () => {};
+  const generateImage = async () => {
+    if (!form.prompt.trim()) return;
+    try {
+      setGenerating(true);
+      const response = await fetch("http://localhost:8080/api/v1/dalle", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prompt: form.prompt }),
+      });
+      const data = await response.json();
+      if (response.status === 200) {
+        setForm({
+          ...form,
+          image: `data:image/jpeg;base64,${data.image}`,
+        });
+        setError("");
+      } else {
+        setError(data.error);
+      }
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setGenerating(false);
+    }
+  };
 
   return (
     <section className="max-w-7xl mx-auto">
@@ -83,8 +110,9 @@ function CreatePost() {
             type="button"
             onClick={generateImage}
             className="text-white bg-green-700 font-medium rounded-md text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+            disabled={generating}
           >
-            {generating ? "Generating" : "Generate"}
+            {generating ? "Generating..." : "Generate"}
           </button>
         </div>
         <div className="mt-10">
