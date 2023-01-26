@@ -5,6 +5,7 @@ import { preview } from "../assets";
 import { getRandomPrompt } from "../utils";
 import FormField from "../components/FormField";
 import Loader from "../components/Loader";
+import { apiUrl } from "../constants";
 
 function CreatePost() {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ function CreatePost() {
     if (!(form.name.trim() && form.prompt.trim() && form.image)) return;
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:8080/api/v1/post", {
+      const response = await fetch(`${apiUrl}/post`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -48,7 +49,7 @@ function CreatePost() {
     if (!form.prompt.trim()) return;
     try {
       setGenerating(true);
-      const response = await fetch("http://localhost:8080/api/v1/dalle", {
+      const response = await fetch(`${apiUrl}/dalle`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
